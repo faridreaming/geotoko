@@ -1,6 +1,27 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Token permukaan — di-swapping untuk tema terang (html[data-theme=light]) */
+:root {
+  --tw-s-0: #ffffff;
+  --tw-s-50: #f8fafc;
+  --tw-s-100: #f1f5f9;
+  --tw-s-200: #e2e8f0;
+  --tw-s-800: #1e293b;
+  --tw-s-900: #0f172a;
+  --tw-s-950: #020617;
+}
+
+html[data-theme='light'] {
+  --tw-s-0: #020617;
+  --tw-s-50: #0f172a;
+  --tw-s-100: #1e293b;
+  --tw-s-200: #475569;
+  --tw-s-800: #e2e8f0;
+  --tw-s-900: #f8fafc;
+  --tw-s-950: #ffffff;
+}
+
 /* ──────────────────────────────────────────────
    Design Tokens (Tailwind v4 @theme)
    ────────────────────────────────────────────── */
@@ -18,13 +39,13 @@
   --color-brand-800: #065f36;
   --color-brand-900: #064e2e;
 
-  --color-surface-0: #ffffff;
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-800: #1e293b;
-  --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+  --color-surface-0: var(--tw-s-0);
+  --color-surface-50: var(--tw-s-50);
+  --color-surface-100: var(--tw-s-100);
+  --color-surface-200: var(--tw-s-200);
+  --color-surface-800: var(--tw-s-800);
+  --color-surface-900: var(--tw-s-900);
+  --color-surface-950: var(--tw-s-950);
 }
 
 /* ──────────────────────────────────────────────
@@ -39,6 +60,11 @@
 
   html {
     @apply scroll-smooth antialiased;
+    color-scheme: dark;
+  }
+
+  html[data-theme='light'] {
+    color-scheme: light;
   }
 
   body {
@@ -47,6 +73,10 @@
 
   ::selection {
     @apply bg-brand-500/30 text-white;
+  }
+
+  html[data-theme='light'] ::selection {
+    color: #0f172a;
   }
 
   ::-webkit-scrollbar {
@@ -61,51 +91,58 @@
 }
 
 /* ──────────────────────────────────────────────
-   Custom View Transitions
+   View Transitions — reveal lingkaran dari --vt-cx / --vt-cy (fallback tengah)
    ────────────────────────────────────────────── */
 ::view-transition-group(root) {
-  animation-duration: 0.4s;
+  animation-duration: 1.05s;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 ::view-transition-old(root) {
-  animation-name: vt-exit;
+  animation: vt-circle-old 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 ::view-transition-new(root) {
-  animation-name: vt-enter;
+  animation: vt-circle-new 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes vt-exit {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.98);
-    filter: blur(4px);
+@keyframes vt-circle-old {
+  to {
+    opacity: 0.35;
+    filter: brightness(0.82) saturate(0.92);
   }
 }
 
-@keyframes vt-enter {
-  0% {
-    opacity: 0;
-    transform: scale(1.02);
-    filter: blur(4px);
+@keyframes vt-circle-new {
+  from {
+    clip-path: circle(0% at var(--vt-cx, 50%) var(--vt-cy, 50%));
+    opacity: 0.98;
   }
-  100% {
+  to {
+    clip-path: circle(150% at var(--vt-cx, 50%) var(--vt-cy, 50%));
     opacity: 1;
-    transform: scale(1);
-    filter: blur(0px);
   }
+}
+
+/* Mesh hero: garis grid terbaca di tema terang */
+html[data-theme='light'] .hero-mesh {
+  opacity: 0.45;
+  filter: invert(1) hue-rotate(180deg);
 }
 
 /* ──────────────────────────────────────────────
    Reusable Component Classes (@apply)
    ────────────────────────────────────────────── */
 @layer components {
+  /* Judul / teks kontras tinggi (putih di gelap, gelap di terang) */
+  .text-fg-strong {
+    @apply text-white;
+  }
+
+  html[data-theme='light'] .text-fg-strong {
+    color: #0f172a;
+  }
+
   /* ── Buttons ── */
   .btn-primary {
     @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl
@@ -330,4 +367,25 @@
 
 .leaflet-popup-tip {
   @apply bg-surface-900/95;
+}
+
+/* Peta tema terang: kontrol zoom & popup kontras di atas basemap terang */
+html[data-theme='light'] .geo-map-wrap .leaflet-control-zoom.leaflet-bar {
+  @apply border-surface-200/40 shadow-md;
+}
+
+html[data-theme='light'] .geo-map-wrap .leaflet-control-zoom a {
+  @apply border-surface-200/35 bg-white/95 text-surface-800;
+}
+
+html[data-theme='light'] .geo-map-wrap .leaflet-control-zoom a:hover {
+  @apply bg-surface-100 text-surface-950;
+}
+
+html[data-theme='light'] .geo-map-wrap .leaflet-popup-content-wrapper {
+  @apply border-surface-200/25 bg-white/98 text-surface-800 shadow-lg;
+}
+
+html[data-theme='light'] .geo-map-wrap .leaflet-popup-tip {
+  @apply bg-white/98;
 }

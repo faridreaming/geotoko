@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react'
 import StoreImage from '../components/StoreImage'
+import { useTheme } from '../context/ThemeContext'
 import { STORE_DATA, type Store } from '../constants/stores'
 import { getCategoryMarkerIcon } from '../utils/categoryMarkers'
 import {
@@ -48,6 +49,22 @@ const RATING_MIN_OPTIONS: { label: string; value: number | null }[] = [
 ]
 
 const MAP_CENTER: [number, number] = [3.5952, 98.6722]
+
+const TILE_DARK =
+  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+const TILE_LIGHT =
+  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+
+function InvalidateMapOnTheme({ theme }: { theme: 'light' | 'dark' }) {
+  const map = useMap()
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      map.invalidateSize()
+    })
+    return () => cancelAnimationFrame(id)
+  }, [theme, map])
+  return null
+}
 
 function MapFlyTo({
   target,
@@ -130,7 +147,7 @@ function StoreDetailBody({
       <div>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <h3 className="heading-md text-white">{store.nama_toko}</h3>
+            <h3 className="heading-md text-fg-strong">{store.nama_toko}</h3>
             <p className="mt-0.5 text-sm text-brand-400">{store.kategori_tokopedia}</p>
           </div>
           <div className="flex items-center gap-1 rounded-lg bg-amber-500/15 px-2.5 py-1 text-sm font-semibold text-amber-300">
@@ -325,6 +342,9 @@ export default function MapPage() {
     setFlyTarget({ lat: store.lat, lon: store.lon })
   }
 
+  const { theme } = useTheme()
+  const tileUrl = theme === 'light' ? TILE_LIGHT : TILE_DARK
+
   return (
     <div className="fixed inset-x-0 bottom-0 top-16 z-0 min-h-0">
       {/* Peta: layer penuh — lebar tidak berkurang saat sidebar terbuka */}
@@ -336,9 +356,11 @@ export default function MapPage() {
           zoomControl
         >
           <TileLayer
+            key={theme}
             attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url={tileUrl}
           />
+          <InvalidateMapOnTheme theme={theme} />
           <MapFlyTo target={flyTarget} onDone={clearFlyTarget} />
           {filteredStores.map((store) => (
             <Marker
@@ -359,7 +381,7 @@ export default function MapPage() {
                       loading="lazy"
                     />
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold leading-tight text-white">{store.nama_toko}</h3>
+                      <h3 className="text-fg-strong font-semibold leading-tight">{store.nama_toko}</h3>
                       <p className="mt-1 text-[11px] text-brand-400/90">{store.kategori_tokopedia}</p>
                       <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-amber-400">
                         <Star size={12} className="fill-amber-400 text-amber-400" />
@@ -395,7 +417,7 @@ export default function MapPage() {
       >
         <div className="flex shrink-0 flex-col gap-5">
           <div className="flex items-center justify-between gap-2">
-            <h2 className="heading-md flex items-center gap-2 text-white">
+            <h2 className="heading-md text-fg-strong flex items-center gap-2">
               <Filter size={20} className="text-brand-400" aria-hidden />
               Filter
             </h2>
@@ -560,7 +582,7 @@ export default function MapPage() {
         type="button"
         id="toggle-sidebar"
         onClick={() => setSidebarOpen((v) => !v)}
-        className="absolute top-4 z-[1220] rounded-r-lg border border-l-0 border-surface-200/10 bg-surface-900/90 px-2 py-3 text-surface-200/70 shadow-lg backdrop-blur-md transition-[left,transform] duration-300 ease-out hover:bg-surface-800 hover:text-white"
+        className="absolute top-4 z-[1220] rounded-r-lg border border-l-0 border-surface-200/10 bg-surface-900/90 px-2 py-3 text-surface-200/70 shadow-lg backdrop-blur-md transition-[left,transform] duration-300 ease-out hover:bg-surface-800 hover:text-fg-strong"
         style={{
           left: sidebarOpen ? `min(20rem, 92vw)` : 0,
         }}
@@ -577,11 +599,11 @@ export default function MapPage() {
       {selectedStore && (
         <aside className="detail-panel absolute top-0 right-0 bottom-0 z-[1210] hidden min-h-0 w-[min(100%,24rem)] flex-col border-l border-surface-200/10 bg-surface-900/92 shadow-xl backdrop-blur-md md:flex">
           <div className="flex shrink-0 items-center justify-between gap-2 border-b border-surface-200/10 px-4 py-3">
-            <h2 className="heading-md text-white">Detail toko</h2>
+            <h2 className="heading-md text-fg-strong">Detail toko</h2>
             <button
               type="button"
               onClick={() => setSelectedStoreId(null)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200/15 text-surface-200/80 transition-colors hover:bg-surface-200/10 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200/15 text-surface-200/80 transition-colors hover:bg-surface-200/10 hover:text-fg-strong"
               aria-label="Tutup panel detail"
             >
               <X size={18} />

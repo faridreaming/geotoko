@@ -1,22 +1,36 @@
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { useCallback, useEffect } from 'react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { flushSync } from 'react-dom'
 import Navbar from './components/Navbar'
+import { ThemeProvider } from './context/ThemeContext'
+import { setViewTransitionOrigin } from './lib/viewTransitionOrigin'
 import LandingPage from './pages/LandingPage'
 import MapPage from './pages/MapPage'
 
+export type ViewTransitionNavigateEvent =
+  | Pick<MouseEvent, 'clientX' | 'clientY'>
+  | ReactMouseEvent
+  | undefined
+
 /**
- * Hook: navigate with View Transition API.
- * Uses flushSync to ensure React DOM updates are captured
- * by the view transition snapshot before painting.
+ * Navigasi dengan View Transition API + clip-path lingkaran dari titik klik.
  */
 export function useViewTransitionNavigate() {
   const navigate = useNavigate()
 
   return useCallback(
-    (to: string) => {
+    (to: string, event?: ViewTransitionNavigateEvent) => {
+      const point =
+        event && 'nativeEvent' in event
+          ? { clientX: event.clientX, clientY: event.clientY }
+          : event && 'clientX' in event
+            ? { clientX: event.clientX, clientY: event.clientY }
+            : null
+      setViewTransitionOrigin(point)
+
       if (!document.startViewTransition) {
         navigate(to)
         return
@@ -55,8 +69,10 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }

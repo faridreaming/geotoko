@@ -21,7 +21,7 @@ export default function LandingPage() {
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-brand-500/10 blur-[120px]" />
           <div
-            className="absolute inset-0 opacity-[0.03]"
+            className="hero-mesh absolute inset-0 opacity-[0.03]"
             style={{
               backgroundImage:
                 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)',
@@ -44,7 +44,7 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              <h1 data-aos="fade-up" data-aos-delay="100" className="heading-xl text-white mb-6">
+              <h1 data-aos="fade-up" data-aos-delay="100" className="heading-xl text-fg-strong mb-6">
                 Temukan Toko{' '}
                 <span className="text-gradient">Tokopedia</span>
                 <br />
@@ -57,7 +57,11 @@ export default function LandingPage() {
               </p>
 
               <div data-aos="fade-up" data-aos-delay="300" className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-                <button onClick={() => navigate('/map')} className="btn-primary text-base px-8 py-3.5 cursor-pointer">
+                <button
+                  type="button"
+                  onClick={(e) => navigate('/map', e)}
+                  className="btn-primary cursor-pointer px-8 py-3.5 text-base"
+                >
                   <Map size={20} />
                   Jelajahi Peta
                 </button>
@@ -87,7 +91,7 @@ export default function LandingPage() {
             ].map((stat) => (
               <div key={stat.label} className="glass px-4 py-5 text-center">
                 <div className="mb-2 flex justify-center text-brand-400">{stat.icon}</div>
-                <div className="text-2xl font-bold text-white sm:text-3xl">{stat.value}</div>
+                <div className="text-2xl font-bold text-fg-strong sm:text-3xl">{stat.value}</div>
                 <div className="mt-1 text-xs text-muted">{stat.label}</div>
               </div>
             ))}
@@ -99,7 +103,7 @@ export default function LandingPage() {
       <section id="features" className="relative py-24">
         <div className="section-container">
           <div data-aos="fade-up" className="mb-16 text-center">
-            <h2 className="heading-lg text-white mb-4">Fitur Utama</h2>
+            <h2 className="heading-lg text-fg-strong mb-4">Fitur Utama</h2>
             <p className="text-muted max-w-lg mx-auto">
               Semua yang kamu butuhkan untuk menemukan toko terbaik di sekitarmu.
             </p>
@@ -120,7 +124,7 @@ export default function LandingPage() {
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500/10 text-brand-400 transition-colors duration-300 group-hover:bg-brand-500/20">
                   {feat.icon}
                 </div>
-                <h3 className="heading-md text-white mb-2">{feat.title}</h3>
+                <h3 className="heading-md text-fg-strong mb-2">{feat.title}</h3>
                 <p className="text-sm text-muted leading-relaxed">{feat.desc}</p>
               </div>
             ))}
@@ -148,7 +152,7 @@ export default function LandingPage() {
                 <MapPin size={14} />
                 Visualisasi Data
               </span>
-              <h2 className="heading-lg text-white mb-4">
+              <h2 className="heading-lg text-fg-strong mb-4">
                 Peta Interaktif dengan Data Toko Real
               </h2>
               <p className="text-muted mb-6 leading-relaxed">
@@ -193,7 +197,7 @@ export default function LandingPage() {
               {/* Bio info */}
               <div data-aos="fade-left" data-aos-delay="200" className="text-center md:text-left">
                 <span className="badge-brand mb-4 inline-flex">Dibuat oleh</span>
-                <h2 className="heading-lg text-white mb-2">Muhammad Farid Yamin</h2>
+                <h2 className="heading-lg text-fg-strong mb-2">Muhammad Farid Yamin</h2>
                 <p className="text-brand-400 font-medium mb-2">Frontend Developer</p>
                 <p className="text-muted mb-6">
                   Mahasiswa TRPL — Politeknik Negeri Medan (Polmed)
