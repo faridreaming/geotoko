@@ -4,6 +4,8 @@ import {
 } from 'lucide-react'
 import { STORE_DATA } from '../constants/stores'
 import { useViewTransitionNavigate } from '../App'
+import biodataImg from '../assets/biodata.jpg'
+import heroImg from '../assets/hero.jpeg'
 
 const uniqueCategories = [...new Set(STORE_DATA.map((s) => s.kategori_tokopedia))]
 const avgRating = (STORE_DATA.reduce((s, t) => s + t.rating, 0) / STORE_DATA.length).toFixed(1)
@@ -68,12 +70,11 @@ export default function LandingPage() {
 
             {/* Right — Hero image placeholder */}
             <div data-aos="fade-left" data-aos-delay="400" className="flex justify-center lg:justify-end">
-              {/* PLACEHOLDER: Ganti src dengan gambar hero Anda */}
-              <div className="img-placeholder aspect-[4/3] w-full max-w-lg flex-col gap-3 p-8">
-                <ImageIcon size={48} strokeWidth={1.5} />
-                <span className="text-sm font-medium">Hero Image</span>
-                <span className="text-xs opacity-60">Ganti dengan gambar Anda</span>
-              </div>
+              <img
+                src={heroImg}
+                alt="Peta Toko Tokopedia Medan"
+                className="aspect-[4/3] w-full max-w-lg rounded-2xl object-cover shadow-2xl ring-1 ring-white/10"
+              />
             </div>
           </div>
 
@@ -182,11 +183,11 @@ export default function LandingPage() {
             <div className="grid items-center gap-10 md:grid-cols-[auto_1fr]">
               {/* Profile image placeholder */}
               <div data-aos="zoom-in">
-                {/* PLACEHOLDER: Ganti dengan foto profil Anda */}
-                <div className="img-placeholder mx-auto h-48 w-48 flex-col gap-2 rounded-full md:h-56 md:w-56">
-                  <User size={40} strokeWidth={1.5} />
-                  <span className="text-xs">Foto Profil</span>
-                </div>
+                <img
+                  src={biodataImg}
+                  alt="Muhammad Farid Yamin"
+                  className="mx-auto h-48 w-48 rounded-full object-cover ring-2 ring-brand-500/30 ring-offset-2 ring-offset-surface-900 md:h-56 md:w-56"
+                />
               </div>
 
               {/* Bio info */}
