@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   MapContainer,
   TileLayer,
@@ -7,15 +7,17 @@ import {
   useMap,
 } from 'react-leaflet'
 import {
+  ArrowDownWideNarrow,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
-  Filter,
   MessageCircle,
   Navigation,
   Phone,
   RotateCcw,
   Search,
+  SlidersHorizontal,
   Star,
   Store as StoreIcon,
   X,
@@ -66,6 +68,20 @@ function InvalidateMapOnTheme({ theme }: { theme: 'light' | 'dark' }) {
   return null
 }
 
+/** Peta di flex layout; pastikan tile ikut saat lebar kolom berubah */
+function InvalidateMapOnResize() {
+  const map = useMap()
+  useEffect(() => {
+    const el = map.getContainer()
+    const ro = new ResizeObserver(() => {
+      map.invalidateSize({ debounceMoveend: true })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [map])
+  return null
+}
+
 function MapFlyTo({
   target,
   onDone,
@@ -83,6 +99,248 @@ function MapFlyTo({
   }, [target, map, onDone])
 
   return null
+}
+
+/** Hitung jumlah filter yang aktif (selain pencarian) untuk badge tombol. */
+function countActiveFilters({
+  selectedCategories,
+  selectedShipping,
+  minRating,
+  sortByRatingDesc,
+}: {
+  selectedCategories: Set<string>
+  selectedShipping: Set<ShippingKey>
+  minRating: number | null
+  sortByRatingDesc: boolean
+}): number {
+  return (
+    selectedCategories.size +
+    selectedShipping.size +
+    (minRating != null ? 1 : 0) +
+    (sortByRatingDesc ? 1 : 0)
+  )
+}
+
+function MapFilterBar({
+  searchQuery,
+  setSearchQuery,
+  filteredCount,
+  hasFilters,
+  clearFilters,
+  minRating,
+  setMinRating,
+  sortByRatingDesc,
+  setSortByRatingDesc,
+  selectedCategories,
+  toggleCategory,
+  selectedShipping,
+  toggleShipping,
+}: {
+  searchQuery: string
+  setSearchQuery: (v: string) => void
+  filteredCount: number
+  hasFilters: boolean
+  clearFilters: () => void
+  minRating: number | null
+  setMinRating: (v: number | null) => void
+  sortByRatingDesc: boolean
+  setSortByRatingDesc: (v: boolean) => void
+  selectedCategories: Set<string>
+  toggleCategory: (cat: string) => void
+  selectedShipping: Set<ShippingKey>
+  toggleShipping: (key: ShippingKey) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const activeCount = countActiveFilters({
+    selectedCategories,
+    selectedShipping,
+    minRating,
+    sortByRatingDesc,
+  })
+
+  useEffect(() => {
+    if (!open) return
+    const onClick = (e: MouseEvent) => {
+      if (!containerRef.current) return
+      if (!containerRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onClick)
+    document.addEventListener('keydown', onEsc)
+    return () => {
+      document.removeEventListener('mousedown', onClick)
+      document.removeEventListener('keydown', onEsc)
+    }
+  }, [open])
+
+  return (
+    <div
+      ref={containerRef}
+      className="pointer-events-auto absolute top-3 left-1/2 z-[1100] w-[min(28rem,calc(100%-1.5rem))] -translate-x-1/2 sm:left-3 sm:translate-x-0"
+    >
+      <div className="flex items-center gap-1.5 rounded-full border border-surface-200/12 bg-surface-950/85 p-1.5 pl-3 shadow-lg shadow-black/30 backdrop-blur-xl ring-1 ring-white/[0.03]">
+        <Search size={15} className="shrink-0 text-surface-200/55" aria-hidden />
+        <input
+          type="search"
+          placeholder="Cari toko atau alamat…"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="min-w-0 flex-1 bg-transparent px-1 py-1 text-sm text-surface-100 placeholder:text-surface-200/38 focus:outline-none"
+        />
+        {searchQuery.trim().length > 0 && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            className="rounded-full p-1 text-surface-200/55 transition-colors hover:bg-surface-200/10 hover:text-surface-200"
+            aria-label="Hapus pencarian"
+          >
+            <X size={14} />
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-haspopup="dialog"
+          className={`relative inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+            open || activeCount > 0
+              ? 'border-brand-500/45 bg-brand-500/20 text-brand-100'
+              : 'border-surface-200/12 bg-surface-900/60 text-surface-200/85 hover:border-surface-200/22 hover:bg-surface-900/85'
+          }`}
+        >
+          <SlidersHorizontal size={14} aria-hidden />
+          Filter
+          {activeCount > 0 && (
+            <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
+              {activeCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {open && (
+        <div
+          role="dialog"
+          aria-label="Panel filter"
+          className="mt-2 overflow-hidden rounded-2xl border border-surface-200/12 bg-surface-950/95 shadow-2xl shadow-black/40 ring-1 ring-white/[0.03] backdrop-blur-xl"
+        >
+          <div className="flex items-center justify-between gap-2 border-b border-surface-200/10 px-4 py-2.5">
+            <p className="text-[11px] font-semibold tracking-wider uppercase text-surface-200/55">
+              {filteredCount} toko cocok
+              {hasFilters ? ', filter aktif' : ''}
+            </p>
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-brand-400 transition-colors hover:bg-brand-500/10 hover:text-brand-300"
+              >
+                <RotateCcw size={12} aria-hidden />
+                Reset
+              </button>
+            )}
+          </div>
+
+          <div className="max-h-[min(70vh,30rem)] overflow-y-auto p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative min-w-[10rem] flex-1">
+                <Star
+                  className="pointer-events-none absolute top-1/2 left-2.5 z-10 -translate-y-1/2 text-amber-400/75"
+                  size={14}
+                  aria-hidden
+                />
+                <select
+                  value={minRating ?? ''}
+                  onChange={(e) =>
+                    setMinRating(e.target.value === '' ? null : Number(e.target.value))
+                  }
+                  className="w-full cursor-pointer appearance-none rounded-lg border border-surface-200/12 bg-surface-900/55 py-2 pr-8 pl-8 text-sm text-surface-200 focus:border-brand-500/45 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  {RATING_MIN_OPTIONS.map((o) => (
+                    <option key={o.label} value={o.value ?? ''}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-surface-200/40"
+                  size={14}
+                  aria-hidden
+                />
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={sortByRatingDesc}
+                onClick={() => setSortByRatingDesc(!sortByRatingDesc)}
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors ${
+                  sortByRatingDesc
+                    ? 'border-brand-500/45 bg-brand-500/18 text-brand-100'
+                    : 'border-surface-200/12 bg-surface-900/55 text-surface-200/80 hover:border-surface-200/22'
+                }`}
+              >
+                <ArrowDownWideNarrow size={14} aria-hidden />
+                Rating tertinggi
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <p className="mb-2 text-[10px] font-semibold tracking-widest uppercase text-surface-200/45">
+                Kategori
+              </p>
+              <div className="flex max-h-40 flex-wrap gap-1.5 overflow-y-auto pr-0.5">
+                {CATEGORIES.map((cat) => {
+                  const active = selectedCategories.has(cat)
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => toggleCategory(cat)}
+                      className={`max-w-full truncate rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                        active
+                          ? 'border-brand-500/55 bg-brand-500/22 text-brand-100'
+                          : 'border-surface-200/10 bg-surface-950/50 text-surface-200/75 hover:border-brand-500/28'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <p className="mb-2 text-[10px] font-semibold tracking-widest uppercase text-surface-200/45">
+                Pengiriman
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {SHIPPING_OPTIONS.map((opt) => {
+                  const active = selectedShipping.has(opt.key)
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => toggleShipping(opt.key)}
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                        active
+                          ? 'border-emerald-500/45 bg-emerald-500/15 text-emerald-200'
+                          : 'border-surface-200/10 bg-surface-950/50 text-surface-200/75 hover:border-surface-200/20'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 function shippingTags(store: Store) {
@@ -115,9 +373,12 @@ function shippingTags(store: Store) {
 function StoreDetailBody({
   store,
   onClose,
+  embedded = false,
 }: {
   store: Store
   onClose: () => void
+  /** Tanpa tombol tutup di gambar / kembali bawah; navigasi dari header panel */
+  embedded?: boolean
 }) {
   const open = isOpenNow(store.jam_operasional)
   const phone = normalizeIndonesiaPhone(store.kontak)
@@ -134,14 +395,16 @@ function StoreDetailBody({
           className="aspect-video w-full object-cover"
           loading="lazy"
         />
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-2 right-2 flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200/20 bg-surface-950/90 text-surface-200 backdrop-blur md:hidden"
-          aria-label="Tutup"
-        >
-          <X size={18} />
-        </button>
+        {!embedded && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-2 right-2 flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200/20 bg-surface-950/90 text-surface-200 backdrop-blur md:hidden"
+            aria-label="Tutup"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       <div>
@@ -249,13 +512,15 @@ function StoreDetailBody({
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onClose}
-        className="btn-ghost w-full py-2 text-sm md:hidden"
-      >
-        Kembali ke daftar
-      </button>
+      {!embedded && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn-ghost w-full py-2 text-sm md:hidden"
+        >
+          Kembali ke daftar
+        </button>
+      )}
     </div>
   )
 }
@@ -266,7 +531,6 @@ export default function MapPage() {
   const [selectedShipping, setSelectedShipping] = useState<Set<ShippingKey>>(new Set())
   const [minRating, setMinRating] = useState<number | null>(null)
   const [sortByRatingDesc, setSortByRatingDesc] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [selectedStoreId, setSelectedStoreId] = useState<number | null>(null)
   const [flyTarget, setFlyTarget] = useState<{ lat: number; lon: number } | null>(null)
 
@@ -346,288 +610,153 @@ export default function MapPage() {
   const tileUrl = theme === 'light' ? TILE_LIGHT : TILE_DARK
 
   return (
-    <div className="fixed inset-x-0 bottom-0 top-16 z-0 min-h-0">
-      {/* Peta: layer penuh; lebar tidak berkurang saat sidebar terbuka */}
-      <div className="geo-map-wrap absolute inset-0 z-0">
-        <MapContainer
-          center={MAP_CENTER}
-          zoom={13}
-          className="h-full w-full"
-          zoomControl
-        >
-          <TileLayer
-            key={theme}
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url={tileUrl}
-          />
-          <InvalidateMapOnTheme theme={theme} />
-          <MapFlyTo target={flyTarget} onDone={clearFlyTarget} />
-          {filteredStores.map((store) => (
-            <Marker
-              key={store.id}
-              position={[store.lat, store.lon]}
-              icon={getCategoryMarkerIcon(store.kategori_tokopedia)}
-              eventHandlers={{
-                click: () => setSelectedStoreId(store.id),
-              }}
-            >
-              <Popup>
-                <div className="min-w-[220px] max-w-[260px] font-sans text-surface-200">
-                  <div className="flex gap-3">
+    <div className="fixed inset-x-0 bottom-0 top-16 z-0 flex min-h-0 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+        {/* Rail kiri: daftar toko + detail */}
+        <aside className="store-rail flex min-h-0 w-full flex-1 flex-col border-t border-surface-200/10 bg-surface-900 shadow-[0_-6px_24px_rgba(0,0,0,0.2)] backdrop-blur-md md:h-full md:w-[min(100%,20rem)] md:flex-none md:border-t-0 md:border-r md:border-surface-200/10 md:shadow-none lg:w-[22rem]">
+        {selectedStore ? (
+          <>
+            <div className="flex shrink-0 items-center gap-2 border-b border-surface-200/10 px-4 py-3">
+              <button
+                type="button"
+                onClick={() => setSelectedStoreId(null)}
+                className="flex h-9 shrink-0 items-center gap-1 rounded-lg border border-surface-200/15 px-2 text-sm text-surface-200/90 transition-colors hover:bg-surface-200/10 hover:text-fg-strong"
+                aria-label="Kembali ke daftar toko"
+              >
+                <ChevronLeft size={18} aria-hidden />
+                <span className="max-w-[8rem] truncate sm:max-w-none">Daftar</span>
+              </button>
+              <h2 className="heading-md min-w-0 flex-1 truncate text-fg-strong">Detail toko</h2>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+              <StoreDetailBody
+                store={selectedStore}
+                embedded
+                onClose={() => setSelectedStoreId(null)}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex shrink-0 items-center justify-between bg-surface-950 gap-2 border-b border-surface-200/10 px-4 py-4">
+              <h2 className="flex items-center gap-2 text-fg-strong">
+                <StoreIcon size={20} className="text-brand-400 shrink-0" aria-hidden />
+                Daftar toko
+              </h2>
+              <span className="badge-brand self-start text-xs">
+                {filteredStores.length} ditampilkan
+              </span>
+            </div>
+            <ul className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4 pt-3">
+              {filteredStores.map((store) => (
+                <li key={store.id}>
+                  <button
+                    type="button"
+                    onClick={() => pickStoreFromList(store)}
+                    className={`flex w-full gap-3 rounded-xl border p-3 text-left shadow-sm transition-colors ${
+                      selectedStoreId === store.id
+                        ? 'border-brand-500/50 bg-brand-500/10 ring-1 ring-brand-500/20'
+                        : 'border-surface-200/10 bg-surface-950/50 hover:border-brand-500/35 hover:bg-surface-950/80'
+                    }`}
+                  >
                     <StoreImage
                       src={store.url_gambar}
                       alt=""
                       className="h-16 w-16 shrink-0 rounded-lg object-cover"
                       loading="lazy"
                     />
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-fg-strong font-semibold leading-tight">{store.nama_toko}</h3>
-                      <p className="mt-1 text-[11px] text-brand-400/90">{store.kategori_tokopedia}</p>
-                      <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-amber-400">
+                    <div className="min-w-0 flex-1 py-0.5">
+                      <p className="line-clamp-2 font-medium leading-snug text-surface-100">
+                        {store.nama_toko}
+                      </p>
+                      <p className="mt-1 truncate text-xs text-brand-400/85">{store.kategori_tokopedia}</p>
+                      <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-amber-400/90">
                         <Star size={12} className="fill-amber-400 text-amber-400" />
                         {store.rating}
                       </p>
                     </div>
-                  </div>
-                  <p className="mt-2 text-center text-[11px] text-surface-200/45">
-                    Detail di panel kanan (desktop) atau bawah (HP)
-                  </p>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-
-      {/* Gelap di atas peta saat drawer filter HP terbuka */}
-      {sidebarOpen && (
-        <button
-          type="button"
-          aria-label="Tutup panel"
-          className="absolute inset-0 z-[1190] bg-black/45 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Panel filter: overlay kiri di atas peta */}
-      <aside
-        className={`filter-panel absolute top-0 bottom-0 left-0 z-[1200] flex min-h-0 w-80 max-w-[min(20rem,92vw)] flex-col border-r border-surface-200/10 bg-surface-900/90 p-5 shadow-xl backdrop-blur-md transition-transform duration-300 ease-out ${
-          sidebarOpen ? 'translate-x-0' : 'pointer-events-none -translate-x-full'
-        }`}
-      >
-        <div className="flex shrink-0 flex-col gap-5">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="heading-md text-fg-strong flex items-center gap-2">
-              <Filter size={20} className="text-brand-400" aria-hidden />
-              Filter
-            </h2>
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="flex cursor-pointer items-center gap-1 text-xs text-brand-400 transition-colors hover:text-brand-300"
-              >
-                <RotateCcw size={12} />
-                Reset
-              </button>
-            )}
-          </div>
-
-          <div className="relative">
-            <Search
-              className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-surface-200/35"
-              size={16}
-            />
-            <input
-              type="search"
-              placeholder="Cari nama toko atau area alamat…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-surface-200/15 bg-surface-950/40 py-2.5 pr-3 pl-10 text-sm text-surface-200 placeholder:text-surface-200/35 focus:border-brand-500/50 focus:outline-none"
-            />
-          </div>
-
-          <div className="badge-brand self-start">
-            {filteredStores.length} toko ditampilkan
-          </div>
-
-          <div>
-            <h3 className="sidebar-section-title">Rating minimum</h3>
-            <select
-              value={minRating ?? ''}
-              onChange={(e) =>
-                setMinRating(e.target.value === '' ? null : Number(e.target.value))
-              }
-              className="w-full cursor-pointer rounded-xl border border-surface-200/15 bg-surface-950/40 px-3 py-2.5 text-sm text-surface-200 focus:border-brand-500/50 focus:outline-none"
-            >
-              {RATING_MIN_OPTIONS.map((o) => (
-                <option key={o.label} value={o.value ?? ''}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <label className="filter-item cursor-pointer rounded-xl border border-transparent hover:border-surface-200/10">
-            <input
-              type="checkbox"
-              className="filter-checkbox"
-              checked={sortByRatingDesc}
-              onChange={(e) => setSortByRatingDesc(e.target.checked)}
-            />
-            <span>Urutkan rating tertinggi dulu</span>
-          </label>
-
-          <div>
-            <h3 className="sidebar-section-title">Filter cepat kategori</h3>
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => {
-                const active = selectedCategories.has(cat)
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => toggleCategory(cat)}
-                    className={`max-w-full truncate rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                      active
-                        ? 'border-brand-500/60 bg-brand-500/20 text-brand-300'
-                        : 'border-surface-200/15 bg-surface-950/30 text-surface-200/70 hover:border-surface-200/25'
-                    }`}
-                  >
-                    {cat}
+                    <ChevronRight
+                      size={18}
+                      className="shrink-0 self-center text-surface-200/35"
+                      aria-hidden
+                    />
                   </button>
-                )
-              })}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="sidebar-section-title">Kategori</h3>
-            <div className="flex flex-col gap-1">
-              {CATEGORIES.map((cat) => (
-                <label key={cat} className="filter-item">
-                  <input
-                    type="checkbox"
-                    className="filter-checkbox"
-                    checked={selectedCategories.has(cat)}
-                    onChange={() => toggleCategory(cat)}
-                  />
-                  <span className="text-sm">{cat}</span>
-                </label>
+                </li>
               ))}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="sidebar-section-title">Jenis pengiriman</h3>
-            <div className="flex flex-col gap-1">
-              {SHIPPING_OPTIONS.map((opt) => (
-                <label key={opt.key} className="filter-item">
-                  <input
-                    type="checkbox"
-                    className="filter-checkbox"
-                    checked={selectedShipping.has(opt.key)}
-                    onChange={() => toggleShipping(opt.key)}
-                  />
-                  <span className="text-sm">{opt.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 flex min-h-0 flex-1 flex-col border-t border-surface-200/10 pt-5">
-          <h3 className="sidebar-section-title mb-3 flex shrink-0 items-center gap-2">
-            <StoreIcon size={14} aria-hidden />
-            Daftar toko
-          </h3>
-          <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
-            {filteredStores.map((store) => (
-              <li key={store.id}>
-                <button
-                  type="button"
-                  onClick={() => pickStoreFromList(store)}
-                  className={`flex w-full gap-3 rounded-xl border p-3 text-left transition-colors ${
-                    selectedStoreId === store.id
-                      ? 'border-brand-500/50 bg-brand-500/10'
-                      : 'border-surface-200/10 bg-surface-950/40 hover:border-brand-500/30 hover:bg-surface-950/70'
-                  }`}
-                >
-                  <StoreImage
-                    src={store.url_gambar}
-                    alt=""
-                    className="h-14 w-14 shrink-0 rounded-lg object-cover"
-                    loading="lazy"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-surface-100">{store.nama_toko}</p>
-                    <p className="truncate text-xs text-surface-200/50">{store.kategori_tokopedia}</p>
-                    <p className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-amber-400/90">
-                      <Star size={12} className="fill-amber-400 text-amber-400" />
-                      {store.rating}
-                    </p>
-                  </div>
-                  <ChevronRight
-                    size={18}
-                    className="shrink-0 self-center text-surface-200/30"
-                  />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+            </ul>
+          </>
+        )}
       </aside>
 
-      <button
-        type="button"
-        id="toggle-sidebar"
-        onClick={() => setSidebarOpen((v) => !v)}
-        className="absolute top-4 z-[1220] rounded-r-lg border border-l-0 border-surface-200/10 bg-surface-900/90 px-2 py-3 text-surface-200/70 shadow-lg backdrop-blur-md transition-[left,transform] duration-300 ease-out hover:bg-surface-800 hover:text-fg-strong"
-        style={{
-          left: sidebarOpen ? `min(20rem, 92vw)` : 0,
-        }}
-        aria-label={sidebarOpen ? 'Tutup sidebar' : 'Buka sidebar'}
-      >
-        {sidebarOpen ? (
-          <ChevronLeft size={16} className="transition-transform duration-300" />
-        ) : (
-          <Filter size={16} />
-        )}
-      </button>
-
-      {/* Panel detail toko: overlay kanan di atas peta (desktop) */}
-      {selectedStore && (
-        <aside className="detail-panel absolute top-0 right-0 bottom-0 z-[1210] hidden min-h-0 w-[min(100%,24rem)] flex-col border-l border-surface-200/10 bg-surface-900/92 shadow-xl backdrop-blur-md md:flex">
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-surface-200/10 px-4 py-3">
-            <h2 className="heading-md text-fg-strong">Detail toko</h2>
-            <button
-              type="button"
-              onClick={() => setSelectedStoreId(null)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200/15 text-surface-200/80 transition-colors hover:bg-surface-200/10 hover:text-fg-strong"
-              aria-label="Tutup panel detail"
-            >
-              <X size={18} />
-            </button>
-          </div>
-          <div className="min-h-0 flex-1 overflow-y-auto p-4">
-            <StoreDetailBody
-              store={selectedStore}
-              onClose={() => setSelectedStoreId(null)}
-            />
-          </div>
-        </aside>
-      )}
-
-      {/* Mobile bottom sheet: detail */}
-      {selectedStore && (
-        <div className="fixed inset-x-0 bottom-0 z-[1300] max-h-[88vh] overflow-y-auto rounded-t-2xl border border-surface-200/15 border-b-0 bg-surface-900/98 p-5 pb-8 shadow-2xl backdrop-blur-lg md:hidden">
-          <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-surface-200/25" />
-          <StoreDetailBody
-            store={selectedStore}
-            onClose={() => setSelectedStoreId(null)}
+        <div className="relative z-0 min-h-[min(44vh,18rem)] min-w-0 flex-1 md:min-h-0">
+          <MapFilterBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filteredCount={filteredStores.length}
+            hasFilters={hasFilters}
+            clearFilters={clearFilters}
+            minRating={minRating}
+            setMinRating={setMinRating}
+            sortByRatingDesc={sortByRatingDesc}
+            setSortByRatingDesc={setSortByRatingDesc}
+            selectedCategories={selectedCategories}
+            toggleCategory={toggleCategory}
+            selectedShipping={selectedShipping}
+            toggleShipping={toggleShipping}
           />
+          <div className="geo-map-wrap absolute inset-0 z-0">
+            <MapContainer
+              center={MAP_CENTER}
+              zoom={13}
+              className="h-full w-full"
+              zoomControl
+            >
+              <TileLayer
+                key={theme}
+                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                url={tileUrl}
+              />
+              <InvalidateMapOnTheme theme={theme} />
+              <InvalidateMapOnResize />
+              <MapFlyTo target={flyTarget} onDone={clearFlyTarget} />
+              {filteredStores.map((store) => (
+                <Marker
+                  key={store.id}
+                  position={[store.lat, store.lon]}
+                  icon={getCategoryMarkerIcon(store.kategori_tokopedia)}
+                  eventHandlers={{
+                    click: () => pickStoreFromList(store),
+                  }}
+                >
+                  <Popup>
+                    <div className="min-w-[220px] max-w-[260px] font-sans text-surface-200">
+                      <div className="flex gap-3">
+                        <StoreImage
+                          src={store.url_gambar}
+                          alt=""
+                          className="h-16 w-16 shrink-0 rounded-lg object-cover"
+                          loading="lazy"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-fg-strong font-semibold leading-tight">{store.nama_toko}</h3>
+                          <p className="mt-1 text-[11px] text-brand-400/90">{store.kategori_tokopedia}</p>
+                          <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-amber-400">
+                            <Star size={12} className="fill-amber-400 text-amber-400" />
+                            {store.rating}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-center text-[11px] text-surface-200/45">
+                        Detail di panel kiri
+                      </p>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
