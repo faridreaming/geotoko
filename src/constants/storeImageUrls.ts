@@ -1,18 +1,18 @@
-import alkesKrakatau from '../assets/alkes_krakatau.jpeg'
-import ankerOfficialMedan from '../assets/anker_official_medan.jpeg'
-import cemilanRoufa from '../assets/cemilan_roufa.jpeg'
-import deliHouseware from '../assets/deli_houseware.jpeg'
-import kebunGreenFeast from '../assets/kebun_green_feast.jpeg'
-import komputermedanOs from '../assets/komputermedan_os.jpeg'
-import megahSaktiPharmacy from '../assets/megah_sakti_pharmacy.jpeg'
-import noImageStore from '../assets/no_image_store.jpeg'
-import omegaPremiumStore from '../assets/omega_premium_store.jpeg'
-import ratuSerbaGrosir from '../assets/ratu_serba_grosir.jpeg'
-import semangatTeknik from '../assets/semangat_teknik.jpeg'
-import shmartElectronic from '../assets/shmart_electronic.jpeg'
-import sumacoHomeOfficeSolution from '../assets/sumaco_home_office_solution.jpeg'
-import twocare from '../assets/twocare.jpeg'
-import vincent888 from '../assets/vincent_888.jpeg'
+import alkesKrakatau from '../assets/stores/alkes_krakatau.jpeg'
+import ankerOfficialMedan from '../assets/stores/anker_official_medan.jpeg'
+import cemilanRoufa from '../assets/stores/cemilan_roufa.jpeg'
+import deliHouseware from '../assets/stores/deli_houseware.jpeg'
+import kebunGreenFeast from '../assets/stores/kebun_green_feast.jpeg'
+import komputermedanOs from '../assets/stores/komputermedan_os.jpeg'
+import megahSaktiPharmacy from '../assets/stores/megah_sakti_pharmacy.jpeg'
+import noImageStore from '../assets/stores/no_image_store.jpeg'
+import omegaPremiumStore from '../assets/stores/omega_premium_store.jpeg'
+import ratuSerbaGrosir from '../assets/stores/ratu_serba_grosir.jpeg'
+import semangatTeknik from '../assets/stores/semangat_teknik.jpeg'
+import shmartElectronic from '../assets/stores/shmart_electronic.jpeg'
+import sumacoHomeOfficeSolution from '../assets/stores/sumaco_home_office_solution.jpeg'
+import twocare from '../assets/stores/twocare.jpeg'
+import vincent888 from '../assets/stores/vincent_888.jpeg'
 
 /** Pemetaan nilai `url_gambar` di data → URL hasil bundler Vite. */
 const BY_FILENAME: Record<string, string> = {
@@ -35,7 +35,7 @@ const BY_FILENAME: Record<string, string> = {
 
 /**
  * Menyelesaikan `url_gambar` ke URL yang bisa dipakai di atribut `src`.
- * Mendukung URL absolut (Tokopedia, dll.) dan nama file lokal di `src/assets/`.
+ * Mendukung URL absolut (Tokopedia, dll.) dan nama file lokal di `src/assets/stores/`.
  */
 export function resolveStoreImageSrc(ref: string): string {
   const trimmed = ref.trim()

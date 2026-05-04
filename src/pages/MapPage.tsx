@@ -347,7 +347,7 @@ export default function MapPage() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 top-16 z-0 min-h-0">
-      {/* Peta: layer penuh — lebar tidak berkurang saat sidebar terbuka */}
+      {/* Peta: layer penuh; lebar tidak berkurang saat sidebar terbuka */}
       <div className="geo-map-wrap absolute inset-0 z-0">
         <MapContainer
           center={MAP_CENTER}

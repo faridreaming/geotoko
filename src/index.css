@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* Token permukaan — di-swapping untuk tema terang (html[data-theme=light]) */
+/* Token permukaan; di-swapping untuk tema terang (html[data-theme=light]) */
 :root {
   --tw-s-0: #ffffff;
   --tw-s-50: #f8fafc;
@@ -91,7 +91,7 @@ html[data-theme='light'] {
 }
 
 /* ──────────────────────────────────────────────
-   View Transitions — reveal lingkaran dari --vt-cx / --vt-cy (fallback tengah)
+   View Transitions: reveal lingkaran dari --vt-cx / --vt-cy (fallback tengah)
    ────────────────────────────────────────────── */
 ::view-transition-group(root) {
   animation-duration: 1.05s;

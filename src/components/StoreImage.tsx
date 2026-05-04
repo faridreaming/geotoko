@@ -1,7 +1,7 @@
 import { resolveStoreImageSrc } from '../constants/storeImageUrls'
 
 /**
- * Gambar toko: nama file mengacu ke `src/assets/` (lihat `storeImageUrls.ts`).
+ * Gambar toko: nama file mengacu ke `src/assets/stores/` (lihat `storeImageUrls.ts`).
  * URL https eksternal tetap didukung; untuk CDN Tokopedia, `referrerPolicy`
  * membantu jika server menolak hotlink.
  */

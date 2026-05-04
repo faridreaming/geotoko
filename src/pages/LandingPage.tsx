@@ -6,6 +6,7 @@ import { STORE_DATA } from '../constants/stores'
 import { useViewTransitionNavigate } from '../App'
 import biodataImg from '../assets/biodata.jpg'
 import heroImg from '../assets/hero.jpeg'
+import mapScreenshotImg from '../assets/screenshot_peta.png'
 
 const uniqueCategories = [...new Set(STORE_DATA.map((s) => s.kategori_tokopedia))]
 const avgRating = (STORE_DATA.reduce((s, t) => s + t.rating, 0) / STORE_DATA.length).toFixed(1)
@@ -35,7 +36,7 @@ export default function LandingPage() {
 
         <div className="section-container relative z-10 py-32">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-            {/* Left — Text content */}
+            {/* Left: text content */}
             <div className="text-center lg:text-left">
               <div data-aos="fade-up" className="mb-6 flex justify-center lg:justify-start">
                 <span className="badge-brand">
@@ -72,7 +73,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right — Hero image placeholder */}
+            {/* Right: hero image */}
             <div data-aos="fade-left" data-aos-delay="400" className="flex justify-center lg:justify-end">
               <img
                 src={heroImg}
@@ -136,17 +137,16 @@ export default function LandingPage() {
       <section id="showcase" className="relative py-24">
         <div className="section-container">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-            {/* Left — Screenshot placeholder */}
+            {/* Left: screenshot peta */}
             <div data-aos="fade-right">
-              {/* PLACEHOLDER: Ganti dengan screenshot peta */}
-              <div className="img-placeholder aspect-video w-full flex-col gap-3 p-8">
-                <MapPin size={48} strokeWidth={1.5} />
-                <span className="text-sm font-medium">Screenshot Peta</span>
-                <span className="text-xs opacity-60">Ganti dengan screenshot aplikasi</span>
-              </div>
+              <img
+                src={mapScreenshotImg}
+                alt="Tampilan peta Geotoko dengan marker toko di Medan"
+                className="aspect-video w-full rounded-2xl object-cover object-top shadow-2xl ring-1 ring-white/10"
+              />
             </div>
 
-            {/* Right — Description */}
+            {/* Right: description */}
             <div data-aos="fade-left" data-aos-delay="200">
               <span className="badge-brand mb-4 inline-flex">
                 <MapPin size={14} />
@@ -200,7 +200,7 @@ export default function LandingPage() {
                 <h2 className="heading-lg text-fg-strong mb-2">Muhammad Farid Yamin</h2>
                 <p className="text-brand-400 font-medium mb-2">Frontend Developer</p>
                 <p className="text-muted mb-6">
-                  Mahasiswa TRPL — Politeknik Negeri Medan (Polmed)
+                  Mahasiswa TRPL, Politeknik Negeri Medan (Polmed)
                 </p>
 
                 <div className="glass inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-3 px-6 py-4 text-sm text-surface-200/70 md:justify-start">
@@ -226,7 +226,7 @@ export default function LandingPage() {
       {/* ═══════════════ FOOTER ═══════════════ */}
       <footer className="border-t border-surface-200/10 py-8">
         <div className="section-container text-center text-xs text-muted">
-          © {new Date().getFullYear()} Geotoko — Muhammad Farid Yamin. Semua hak dilindungi.
+          © {new Date().getFullYear()} Geotoko. Muhammad Farid Yamin. Semua hak dilindungi.
         </div>
       </footer>
     </main>

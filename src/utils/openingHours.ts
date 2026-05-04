@@ -52,6 +52,6 @@ export function formatJamOperasionalList(jamOperasional: string): { day: string;
   const map = parseJamOperasional(jamOperasional)
   return order.map((day) => ({
     day,
-    text: map.get(day) ?? '—',
+    text: map.get(day) ?? '-',
   }))
 }
