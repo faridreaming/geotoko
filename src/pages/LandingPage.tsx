@@ -1,6 +1,6 @@
 import {
   Compass, Map, Filter, Truck, User, Briefcase, GraduationCap,
-  Star, Store, LayoutGrid, MapPin, ArrowRight, ImageIcon, Check,
+  Star, Store, LayoutGrid, MapPin, ArrowRight, Check,
 } from 'lucide-react'
 import { STORE_DATA } from '../constants/stores'
 import { useViewTransitionNavigate } from '../App'

@@ -19,7 +19,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 09.00 - 17.00\nSelasa: 09.00 - 17.00\nRabu: 09.00 - 17.00\nKamis: 09.00 - 17.00\nJumat: 09.00 - 17.00\nSabtu: 09.00 - 15.00\nMinggu: 09.00 - 12.00',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/786bd27111a447189fe52c26db6d8836~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777849476&x-signature=r4WbJiorPPcMoIqCjZA%2FBBMRID0%3D&x-signature-webp=%2BpKYrGPcflUfqIRpQjCycMpofsE%3D',
+      'vincent_888.jpeg',
   },
   {
     id: 2,
@@ -41,7 +41,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 09.00 - 17.00\nSelasa: 09.00 - 17.00\nRabu: 09.00 - 17.00\nKamis: 09.00 - 17.00\nJumat: 09.00 - 17.00\nSabtu: 09.00 - 17.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/e09de99fcc7b45879671378ed0a41390~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777853568&x-signature=QNFsiN0Xzdn4ndzmKY4p4A%2F9%2B8E%3D&x-signature-webp=JIoJspEEdAcr4EKk%2Firypsr2DuI%3D',
+      'komputermedan_os.jpeg',
   },
   {
     id: 3,
@@ -63,7 +63,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 09.00 - 17.00\nSelasa: 09.00 - 17.00\nRabu: 09.00 - 17.00\nKamis: 09.00 - 17.00\nJumat: 09.00 - 17.00\nSabtu: 09.00 - 17.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/a573ba43535e4fccbb4c9904452eb43a~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777852835&x-signature=w2HIHny4Qgk5Orq6Xx%2FXVbG6g%2B4%3D&x-signature-webp=jACwMHPwpHdOGMWqj%2Bw%2Bb1vBxkY%3D',
+      'omega_premium_store.jpeg',
   },
   {
     id: 4,
@@ -85,7 +85,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.00 - 17.00\nSelasa: 08.00 - 17.00\nRabu: 08.00 - 17.00\nKamis: 08.00 - 17.00\nJumat: 08.00 - 17.00\nSabtu: 08.00 - 17.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/97d19cc1d2394b9b88a2d23495a60cae~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777854260&x-signature=eh6ocfAgAAtSR3z7pTVudi%2FuAG4%3D&x-signature-webp=kxfVOouO1dzwuT%2FnPx5PCEmVL%2FU%3D',
+      'kebun_green_feast.jpeg',
   },
   {
     id: 5,
@@ -107,7 +107,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.00 - 22.00\nSelasa: 08.00 - 22.00\nRabu: 08.00 - 22.00\nKamis: 08.00 - 22.00\nJumat: 08.00 - 22.00\nSabtu: 08.00 - 22.00\nMinggu: 08.00 - 22.00',
     url_gambar:
-      'https://p16-images-common-sign-sg.tokopedia-static.net/tos-maliva-i-o3syd03w52-us/0e29f842d9944404a7018050f642f735~tplv-o3syd03w52-resize-jpeg:215:215.jpeg?lk3s=7a10017b&x-expires=1777854425&x-signature=3t3YWBvs2kCygx1l3qsnO35ukiY%3D&x-signature-webp=9yPB68li0mqSlLGMCYy5R7FPkZw%3D',
+      'cemilan_roufa.jpeg',
   },
   {
     id: 6,
@@ -129,7 +129,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.00 - 17.00\nSelasa: 08.00 - 17.00\nRabu: 08.00 - 17.00\nKamis: 08.00 - 17.00\nJumat: 08.00 - 17.00\nSabtu: 08.00 - 17.00\nMinggu: 08.00 - 17.00',
     url_gambar:
-      'https://p19-images-common-sign-sg.tokopedia-static.net/tos-maliva-i-o3syd03w52-us/a0499006116a47deb9f66d838557359d~tplv-o3syd03w52-resize-jpeg:215:215.jpeg?lk3s=7a10017b&x-expires=1777854776&x-signature=83VduUbdu8JwoObuXUaVsH4Nz7I%3D&x-signature-webp=LTjPW2AvXkaIhxPLRTn4HIhz0qs%3D',
+      'no_image_store.jpeg',
   },
   {
     id: 7,
@@ -150,7 +150,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 09.00 - 17.00\nSelasa: 09.00 - 17.00\nRabu: 09.00 - 17.00\nKamis: 09.00 - 17.00\nJumat: 09.00 - 17.00\nSabtu: 09.00 - 16.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/9124b470dea74292888a70f93dd44ae4~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777855089&x-signature=dS21eePjERvnpob2hcScG%2BapQpY%3D&x-signature-webp=If7SSDU2qeyJ8g9oo%2FpM2QGcC5Q%3D',
+      'anker_official_medan.jpeg',
   },
   {
     id: 8,
@@ -172,7 +172,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.30 - 18.30\nSelasa: 08.30 - 18.30\nRabu: 08.30 - 18.30\nKamis: 08.30 - 18.30\nJumat: 08.30 - 18.30\nSabtu: 08.30 - 18.30\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-common-sign-sg.tokopedia-static.net/tos-maliva-i-o3syd03w52-us/d3da4d2e52444ae58df5507471b32a20~tplv-o3syd03w52-resize-jpeg:215:215.jpeg?lk3s=7a10017b&x-expires=1777855239&x-signature=OHumRde16ywC7RrUNilmTjEnmAE%3D&x-signature-webp=%2FJEdHPTBsFXgMk7lslReFnUl9nM%3D',
+      'shmart_electronic.jpeg',
   },
   {
     id: 9,
@@ -194,7 +194,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.00 - 17.00\nSelasa: 08.00 - 17.00\nRabu: 08.00 - 17.00\nKamis: 08.00 - 17.00\nJumat: 08.00 - 17.00\nSabtu: 08.00 - 17.00\nMinggu: 08.00 - 17.00',
     url_gambar:
-      'https://p19-images-common-sign-sg.tokopedia-static.net/tos-maliva-i-o3syd03w52-us/b1f2c03dfd4143f998af9078a6f38a48~tplv-o3syd03w52-resize-jpeg:215:215.jpeg?lk3s=7a10017b&x-expires=1777855456&x-signature=8vbhAd2OtjMMJpysV0beYvysljw%3D&x-signature-webp=cZWuX91zQZHIDbtaaFMeDSqeTwQ%3D',
+      'deli_houseware.jpeg',
   },
   {
     id: 10,
@@ -216,7 +216,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.30 - 20.00\nSelasa: 08.30 - 20.00\nRabu: 08.30 - 20.00\nKamis: 08.30 - 20.00\nJumat: 08.30 - 20.00\nSabtu: 08.30 - 20.00\nMinggu: 09.00 - 17.00',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/3ae7e2a451fb43fa802e3ba5ade0f70b~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777855820&x-signature=2hbVvuUx1vUL5MNEkQYRoet3nZA%3D&x-signature-webp=9hr3B0RXdL1gQcibaU0gaXS%2FYh4%3D',
+      'twocare.jpeg',
   },
   {
     id: 11,
@@ -238,7 +238,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 09.00 - 17.00\nSelasa: 09.00 - 17.00\nRabu: 09.00 - 17.00\nKamis: 09.00 - 17.00\nJumat: 09.00 - 17.00\nSabtu: 09.00 - 17.00\nMinggu: Tutup',
     url_gambar:
-      'https://p19-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/cbec1dc319814a37a5e265d61d6209b1~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777856382&x-signature=fLJttrH8AEp8iSepv3oL%2BMbLAnM%3D&x-signature-webp=wXL7H4oaiUpFwIVEAkkhxo3np%2Fk%3D',
+      'megah_sakti_pharmacy.jpeg',
   },
   {
     id: 12,
@@ -260,7 +260,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.00 - 18.00\nSelasa: 08.00 - 18.00\nRabu: 08.00 - 18.00\nKamis: 08.00 - 18.00\nJumat: 08.00 - 18.00\nSabtu: 08.00 - 18.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/f9f6259db02c46ae92e73090004b30f8~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777859462&x-signature=vCu8LktxCtZYyBV4TBex3RHj1mY%3D&x-signature-webp=1JF9XiFqzjCtlEK5dOxYfiFQMHs%3D',
+      'alkes_krakatau.jpeg',
   },
   {
     id: 13,
@@ -281,7 +281,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.00 - 19.00\nSelasa: 08.00 - 19.00\nRabu: 08.00 - 19.00\nKamis: 08.00 - 19.00\nJumat: 08.00 - 19.00\nSabtu: 08.00 - 19.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/e45f80daa7d64f42bc6ebbd8699d62d3~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777859755&x-signature=cl5w1w6Jq2wQLcH9Th7MPNYDkdU%3D&x-signature-webp=YcUI3%2B3%2BzlDLl%2BXGylA0QQ9b2Oo%3D',
+      'ratu_serba_grosir.jpeg',
   },
   {
     id: 14,
@@ -303,7 +303,7 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 08.00 - 18.00\nSelasa: 08.00 - 18.00\nRabu: 08.00 - 18.00\nKamis: 08.00 - 18.00\nJumat: 08.00 - 18.00\nSabtu: 08.00 - 18.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/5091bf361ac649c9ab3437c984fd5136~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777859953&x-signature=IoMyiG3TEcvJvMVF%2BeMsyfVVhwM%3D&x-signature-webp=Ycp5Pr4oi0nbNbqw9K7jsTnZh%2F4%3D',
+      'semangat_teknik.jpeg',
   },
   {
     id: 15,
@@ -325,6 +325,8 @@ export const STORE_DATA = [
     jam_operasional:
       'Senin: 09.00 - 17.00\nSelasa: 09.00 - 17.00\nRabu: 09.00 - 17.00\nKamis: 09.00 - 17.00\nJumat: 09.00 - 17.00\nSabtu: 09.00 - 17.00\nMinggu: Tutup',
     url_gambar:
-      'https://p16-images-sign-sg.tokopedia-static.net/tos-alisg-i-aphluv4xwc-sg/4c963371b5e140ccb96b10241ff6e1a2~tplv-aphluv4xwc-white-pad-v1:215:215.jpeg?lk3s=7a10017b&x-expires=1777860385&x-signature=q3Dx4R7QSvuYufwrGYBPhMBjgIs%3D&x-signature-webp=gd1Joc%2BH8q2pNs%2FYqXzXHBce0Kc%3D',
+      'sumaco_home_office_solution.jpeg',
   },
 ]
+
+export type Store = (typeof STORE_DATA)[number]
