@@ -22,7 +22,7 @@ export default function LandingPage() {
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-brand-500/10 blur-[120px]" />
           <div
-            className="hero-mesh absolute inset-0 opacity-[0.03]"
+            className="hero-mesh absolute inset-0 opacity-[0.45]"
             style={{
               backgroundImage:
                 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)',

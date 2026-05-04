@@ -11,7 +11,9 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Clock3,
   ExternalLink,
+  MapPin,
   MessageCircle,
   Navigation,
   Phone,
@@ -20,14 +22,20 @@ import {
   SlidersHorizontal,
   Star,
   Store as StoreIcon,
+  Truck,
   X,
 } from 'lucide-react'
 import StoreImage from '../components/StoreImage'
 import { useTheme } from '../context/ThemeContext'
 import { STORE_DATA, type Store } from '../constants/stores'
-import { getCategoryMarkerIcon } from '../utils/categoryMarkers'
+import {
+  getCategoryColor,
+  getCategoryIcon,
+  getCategoryMarkerIcon,
+} from '../utils/categoryMarkers'
 import {
   formatJamOperasionalList,
+  getTodayDayName,
   isOpenNow,
 } from '../utils/openingHours'
 import { normalizeIndonesiaPhone } from '../utils/phoneLinks'
@@ -343,6 +351,29 @@ function MapFilterBar({
   )
 }
 
+function CategoryLabel({
+  kategori,
+  size = 12,
+  className = '',
+}: {
+  kategori: string
+  size?: number
+  className?: string
+}) {
+  const { theme } = useTheme()
+  const Icon = getCategoryIcon(kategori)
+  const color = getCategoryColor(kategori, theme)
+  return (
+    <span
+      className={`inline-flex items-center gap-1 ${className}`}
+      style={{ color }}
+    >
+      <Icon size={size} aria-hidden className="shrink-0" />
+      <span className="min-w-0 truncate">{kategori}</span>
+    </span>
+  )
+}
+
 function shippingTags(store: Store) {
   return (
     <div className="flex flex-wrap gap-1">
@@ -370,6 +401,14 @@ function shippingTags(store: Store) {
   )
 }
 
+function DetailSectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-surface-200/55">
+      {children}
+    </h4>
+  )
+}
+
 function StoreDetailBody({
   store,
   onClose,
@@ -382,24 +421,47 @@ function StoreDetailBody({
 }) {
   const open = isOpenNow(store.jam_operasional)
   const phone = normalizeIndonesiaPhone(store.kontak)
+  const today = getTodayDayName()
   const directionsGoogle = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}`
   const directionsApple = `https://maps.apple.com/?daddr=${store.lat},${store.lon}&dirflg=d`
   const jamRows = formatJamOperasionalList(store.jam_operasional)
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="relative overflow-hidden rounded-xl border border-surface-200/10 bg-surface-950/50">
+    <div className="flex flex-col gap-5 pb-2">
+      {/* Cover image dengan overlay status */}
+      <div className="relative overflow-hidden rounded-2xl border border-surface-200/10 bg-surface-950/50 shadow-lg shadow-black/20">
         <StoreImage
           src={store.url_gambar}
           alt={store.nama_toko}
-          className="aspect-video w-full object-cover"
+          className="aspect-[4/3] w-full object-cover"
           loading="lazy"
         />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/65 via-black/25 to-transparent"
+        />
+        {open !== null && (
+          <span
+            className={`absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 backdrop-blur-md ${
+              open
+                ? 'bg-emerald-500/85 text-white ring-emerald-200/40'
+                : 'bg-rose-500/85 text-white ring-rose-200/40'
+            }`}
+          >
+            <span
+              className={`size-1.5 rounded-full ${
+                open ? 'bg-emerald-100' : 'bg-rose-100'
+              }`}
+              aria-hidden
+            />
+            {open ? 'Buka sekarang' : 'Tutup sekarang'}
+          </span>
+        )}
         {!embedded && (
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-2 right-2 flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200/20 bg-surface-950/90 text-surface-200 backdrop-blur md:hidden"
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur-md transition-colors hover:bg-black/70 md:hidden"
             aria-label="Tutup"
           >
             <X size={18} />
@@ -407,110 +469,156 @@ function StoreDetailBody({
         )}
       </div>
 
-      <div>
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <h3 className="heading-md text-fg-strong">{store.nama_toko}</h3>
-            <p className="mt-0.5 text-sm text-brand-400">{store.kategori_tokopedia}</p>
-          </div>
-          <div className="flex items-center gap-1 rounded-lg bg-amber-500/15 px-2.5 py-1 text-sm font-semibold text-amber-300">
-            <Star size={14} className="fill-amber-400 text-amber-400" />
-            {store.rating}
-          </div>
+      {/* Header: nama, kategori, rating */}
+      <header className="space-y-1.5">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="heading-md leading-snug text-fg-strong">{store.nama_toko}</h3>
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-sm font-semibold text-amber-500 ring-1 ring-amber-400/25">
+            <Star size={14} className="fill-amber-400" aria-hidden />
+            {store.rating.toFixed(1)}
+          </span>
         </div>
+        <CategoryLabel
+          kategori={store.kategori_tokopedia}
+          size={14}
+          className="text-sm font-semibold"
+        />
+      </header>
 
-        {open !== null && (
-          <div className="mt-3">
-            <span
-              className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                open
-                  ? 'bg-emerald-500/20 text-emerald-300'
-                  : 'bg-rose-500/20 text-rose-300'
-              }`}
-            >
-              {open ? 'Buka sekarang' : 'Tutup sekarang'}
-            </span>
-          </div>
-        )}
-
-        <p className="mt-3 text-sm leading-relaxed text-surface-200/80">{store.alamat}</p>
-
-        {store.deskripsi ? (
-          <p className="mt-3 text-sm leading-relaxed text-surface-200/60">{store.deskripsi}</p>
-        ) : null}
-
-        <div className="mt-4">
-          <h4 className="sidebar-section-title mb-2">Jadwal operasional</h4>
-          <ul className="space-y-1.5 text-sm">
-            {jamRows.map(({ day, text }) => (
-              <li
-                key={day}
-                className="flex justify-between gap-3 border-b border-surface-200/5 py-1 text-surface-200/70 last:border-0"
-              >
-                <span className="text-surface-200/50">{day}</span>
-                <span className="text-right text-surface-200/90">{text}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="mt-4">{shippingTags(store)}</div>
+      {/* Alamat */}
+      <div className="flex items-start gap-2.5 rounded-xl border border-surface-200/10 bg-surface-950/40 p-3">
+        <MapPin
+          size={16}
+          aria-hidden
+          className="mt-0.5 shrink-0 text-brand-400"
+        />
+        <p className="flex-1 text-sm leading-relaxed text-surface-100/85">
+          {store.alamat}
+        </p>
       </div>
 
-      <div className="flex flex-col gap-2 border-t border-surface-200/10 pt-4">
-        <p className="sidebar-section-title mb-0">Aksi</p>
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+      {store.deskripsi ? (
+        <p className="text-[13px] leading-relaxed text-surface-200/75">
+          {store.deskripsi}
+        </p>
+      ) : null}
+
+      {/* Pengiriman */}
+      <section className="space-y-2">
+        <DetailSectionTitle>
+          <span className="inline-flex items-center gap-1.5">
+            <Truck size={13} aria-hidden className="text-surface-200/45" />
+            Pengiriman
+          </span>
+        </DetailSectionTitle>
+        {shippingTags(store)}
+      </section>
+
+      {/* Jadwal operasional */}
+      <section className="space-y-2">
+        <DetailSectionTitle>
+          <span className="inline-flex items-center gap-1.5">
+            <Clock3 size={13} aria-hidden className="text-surface-200/45" />
+            Jadwal operasional
+          </span>
+        </DetailSectionTitle>
+        <ul className="overflow-hidden rounded-xl border border-surface-200/10 bg-surface-950/40 text-sm">
+          {jamRows.map(({ day, text }, i) => {
+            const isToday = day === today
+            const isClosed = /tutup|libur|closed/i.test(text)
+            return (
+              <li
+                key={day}
+                className={`flex items-center justify-between gap-3 px-3 py-2 ${
+                  i === 0 ? '' : 'border-t border-surface-200/5'
+                } ${isToday ? 'bg-brand-500/10' : ''}`}
+              >
+                <span
+                  className={`flex items-center gap-2 ${
+                    isToday
+                      ? 'font-semibold text-brand-300'
+                      : 'text-surface-200/65'
+                  }`}
+                >
+                  {day}
+                  {isToday && (
+                    <span className="rounded-full bg-brand-500/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand-200">
+                      Hari ini
+                    </span>
+                  )}
+                </span>
+                <span
+                  className={`text-right tabular-nums ${
+                    isClosed
+                      ? 'text-rose-300/85'
+                      : isToday
+                        ? 'font-semibold text-fg-strong'
+                        : 'text-surface-100/85'
+                  }`}
+                >
+                  {text}
+                </span>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+
+      {/* Aksi */}
+      <section className="space-y-2 border-t border-surface-200/10 pt-4">
+        <DetailSectionTitle>Aksi</DetailSectionTitle>
+        <div className="flex flex-col gap-2">
           <a
-            href={directionsGoogle}
+            href={store.link_toko}
             target="_blank"
             rel="noreferrer"
-            className="btn-primary flex-1 justify-center py-2.5 text-sm"
+            className="btn-primary w-full justify-center px-4 py-2.5 text-sm"
           >
-            <Navigation size={16} />
-            Rute (Google Maps)
+            <ExternalLink size={16} />
+            Kunjungi Tokopedia
           </a>
-          <a
-            href={directionsApple}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-outline flex-1 justify-center py-2.5 text-sm"
-          >
-            <Navigation size={16} />
-            Apple Maps
-          </a>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <div className="flex gap-2">
+            <a
+              href={directionsGoogle}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-outline flex-1 justify-center px-3 py-2.5 text-sm"
+            >
+              <Navigation size={16} />
+              Google Maps
+            </a>
+            <a
+              href={directionsApple}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-outline flex-1 justify-center px-3 py-2.5 text-sm"
+            >
+              <Navigation size={16} />
+              Apple Maps
+            </a>
+          </div>
           {phone && (
-            <>
+            <div className="flex gap-2">
               <a
                 href={phone.waHref}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-outline flex flex-1 items-center justify-center gap-2 py-2.5 text-sm"
+                className="btn-outline flex-1 justify-center px-3 py-2.5 text-sm"
               >
                 <MessageCircle size={16} />
                 WhatsApp
               </a>
               <a
                 href={phone.telHref}
-                className="btn-outline flex flex-1 items-center justify-center gap-2 py-2.5 text-sm"
+                className="btn-outline flex-1 justify-center px-3 py-2.5 text-sm"
               >
                 <Phone size={16} />
                 Telepon
               </a>
-            </>
+            </div>
           )}
-          <a
-            href={store.link_toko}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-primary flex flex-1 items-center justify-center gap-2 py-2.5 text-sm"
-          >
-            <ExternalLink size={16} />
-            Kunjungi Tokopedia
-          </a>
         </div>
-      </div>
+      </section>
 
       {!embedded && (
         <button
@@ -616,17 +724,16 @@ export default function MapPage() {
         <aside className="store-rail flex min-h-0 w-full flex-1 flex-col border-t border-surface-200/10 bg-surface-900 shadow-[0_-6px_24px_rgba(0,0,0,0.2)] backdrop-blur-md md:h-full md:w-[min(100%,20rem)] md:flex-none md:border-t-0 md:border-r md:border-surface-200/10 md:shadow-none lg:w-[22rem]">
         {selectedStore ? (
           <>
-            <div className="flex shrink-0 items-center gap-2 border-b border-surface-200/10 px-4 py-3">
+            <div className="flex shrink-0 items-center gap-2 bg-surface-950 border-b border-surface-200/10 px-4 py-3">
               <button
                 type="button"
                 onClick={() => setSelectedStoreId(null)}
-                className="flex h-9 shrink-0 items-center gap-1 rounded-lg border border-surface-200/15 px-2 text-sm text-surface-200/90 transition-colors hover:bg-surface-200/10 hover:text-fg-strong"
+                className="flex h-9 shrink-0 items-center gap-1 rounded-lg px-2 text-sm text-surface-200/90 transition-colors hover:bg-surface-200/10 hover:text-fg-strong"
                 aria-label="Kembali ke daftar toko"
               >
                 <ChevronLeft size={18} aria-hidden />
-                <span className="max-w-[8rem] truncate sm:max-w-none">Daftar</span>
               </button>
-              <h2 className="heading-md min-w-0 flex-1 truncate text-fg-strong">Detail toko</h2>
+              <h2 className="min-w-0 flex-1 truncate text-fg-strong">Detail toko</h2>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               <StoreDetailBody
@@ -638,7 +745,7 @@ export default function MapPage() {
           </>
         ) : (
           <>
-            <div className="flex shrink-0 items-center justify-between bg-surface-950 gap-2 border-b border-surface-200/10 px-4 py-4">
+            <div className="flex shrink-0 items-center justify-between bg-surface-950 gap-2 border-b border-surface-200/10 px-6 py-4">
               <h2 className="flex items-center gap-2 text-fg-strong">
                 <StoreIcon size={20} className="text-brand-400 shrink-0" aria-hidden />
                 Daftar toko
@@ -669,9 +776,13 @@ export default function MapPage() {
                       <p className="line-clamp-2 font-medium leading-snug text-surface-100">
                         {store.nama_toko}
                       </p>
-                      <p className="mt-1 truncate text-xs text-brand-400/85">{store.kategori_tokopedia}</p>
-                      <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-amber-400/90">
-                        <Star size={12} className="fill-amber-400 text-amber-400" />
+                      <CategoryLabel
+                        kategori={store.kategori_tokopedia}
+                        size={12}
+                        className="mt-1 max-w-full text-xs font-medium"
+                      />
+                      <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-yellow-400 dark:text-yellow-500">
+                        <Star size={12} className="fill-yellow-400 dark:fill-yellow-500" />
                         {store.rating}
                       </p>
                     </div>
@@ -723,7 +834,7 @@ export default function MapPage() {
                 <Marker
                   key={store.id}
                   position={[store.lat, store.lon]}
-                  icon={getCategoryMarkerIcon(store.kategori_tokopedia)}
+                  icon={getCategoryMarkerIcon(store.kategori_tokopedia, theme)}
                   eventHandlers={{
                     click: () => pickStoreFromList(store),
                   }}
@@ -739,9 +850,13 @@ export default function MapPage() {
                         />
                         <div className="min-w-0 flex-1">
                           <h3 className="text-fg-strong font-semibold leading-tight">{store.nama_toko}</h3>
-                          <p className="mt-1 text-[11px] text-brand-400/90">{store.kategori_tokopedia}</p>
-                          <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-amber-400">
-                            <Star size={12} className="fill-amber-400 text-amber-400" />
+                          <CategoryLabel
+                            kategori={store.kategori_tokopedia}
+                            size={11}
+                            className="mt-1 max-w-full text-[11px] font-medium"
+                          />
+                          <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-amber-500">
+                            <Star size={12} className="fill-amber-500 text-amber-500" />
                             {store.rating}
                           </p>
                         </div>
